@@ -4,6 +4,8 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 
+from fantasy.models import User
+
 
 def index(request):
     return render(request, "pages/index.html")
