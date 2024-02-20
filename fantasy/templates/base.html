@@ -15,8 +15,8 @@
   <script src="{% static 'main.js' %}"></script>
 </head>
 
-<body>
-  <nav class="navbar navbar-expand-lg mb-4">
+<body class="d-flex flex-column min-vh-100">
+  <nav class="navbar navbar-expand-lg mb-2">
     <div class="container-fluid">
       <a class="navbar-brand mb-2 mb-lg-0" href="{% url 'index' %}">
         <i class="bi bi-tsunami"></i>
@@ -71,11 +71,11 @@
   <div class="body">{% block body %} {% endblock %}</div>
 
 
-  <footer class="bg-body-tertiary">
+  <footer class="bg-body-tertiary mt-auto">
     <div class="row">
       <div class="col"></div>
       <div class="col-6 text-center p-3">
-        © 2024 All rights reserved | Crafted by Alexandre Debortoli <i class="bi bi-code-slash"></i>
+        © 2024 All rights reserved | Created by Alexandre Debortoli <i class="bi bi-code-slash"></i>
       </div>
       <div class="col d-flex justify-content-end align-items-center gap-3">
         <a class="text-white" href="https://github.com/alexandredebortoli" target="_blank" style="font-size: 2rem;"><i

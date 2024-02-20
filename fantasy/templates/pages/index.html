@@ -3,86 +3,86 @@
 
 {% block body %}
 <div class="container-sm">
-    <div class="row my-5">
-        <div class="col">
+    <div class="row my-3 d-flex gap-5">
+        <div class="col-md">
             <div class="h-100 d-flex flex-column justify-content-center">
-                <h1 class="mb-4"><strong>Are you up for the<br>
-                        <div class="text-primary">challenge?</div>
+                <h1 class="mb-4"><strong>Are you up for the
+                        <span class="text-primary">challenge?</span>
                     </strong></h1>
                 <p class="fs-5 mb-4 text-wrap">Make your predictions in the World Surf League's Championship Tour and
                     take on your
                     friends in
                     the ultimate showdown.</p>
                 {% if user.is_authenticated %}
-                <a href="{% url '#' %}" class="w-50">
+                <a href="#">
                     <button class="btn btn-lg btn-primary w-100 play-now">Play now!</button>
                 </a>
                 {% else %}
-                <a href="{% url 'login' %}" class="w-50">
+                <a href="{% url 'login' %}">
                     <button class="btn btn-lg btn-primary w-100 play-now">Play now!</button>
                 </a>
                 {% endif %}
             </div>
         </div>
-        <div class="col">
+        <div class="col-md mt-5">
             <img src="{% static 'images/surf-friends.jpg' %}"
-                class="img-fluid rounded mx-auto d-block w-75 image-shadow" alt="Surfing friends">
+                class="img-fluid rounded mx-auto d-block w-100 image-shadow" alt="Surfing friends">
         </div>
     </div>
-    <div class="row my-5">
+    <div class="row my-3">
         <div class="col">
             <h2 class="my-5 mb-4 text-center fw-bold">How to play:</h1>
         </div>
     </div>
-    <div class="row my-5">
+    <div class="row mb-5">
         <div class="col">
             <div class="container-fluid">
                 <div class="row flex-nowrap overflow-scroll">
-                    <div class="col-3">
+                    <div class="col-12 col-xxl-3 col-xl-4 col-lg-6 col-md-8 col-sm-12 h-100">
                         <div class="card text-center mb-3">
                             <div class="card-body my-4">
-                                <i class="bi bi-door-closed" style="font-size: 5rem; color: #0d6efd;"></i>
+                                <i class="bi bi-door-closed" style="font-size: 5vw; color: #0d6efd;"></i>
                                 <h5 class="card-title fw-bold">Register for free!</h5>
                                 <p class="card-text text-secondary-emphasis">Create your account at WSL Fantasy for
                                     free!</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-12 col-xxl-3 col-xl-4 col-lg-6 col-md-8 col-sm-12 h-100">
                         <div class="card text-center mb-3">
                             <div class="card-body my-4">
-                                <i class="bi bi-people" style="font-size: 5rem; color: #0d6efd;"></i>
-                                <h5 class="card-title fw-bold">Join or create your league</h5>
-                                <p class="card-text text-secondary-emphasis">Choose a league you wish to
-                                    participate or
-                                    create your own.</p>
+                                <i class="bi bi-people" style="font-size: 5vw; color: #0d6efd;"></i>
+                                <h5 class="card-title fw-bold">Join a league</h5>
+                                <p class="card-text text-secondary-emphasis">Join a league with friends or start your
+                                    own.
+                                </p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-12 col-xxl-3 col-xl-4 col-lg-6 col-md-8 col-sm-12 h-100">
                         <div class="card text-center mb-3">
                             <div class="card-body my-4">
-                                <i class="bi bi-dice-3" style="font-size: 5rem; color: #0d6efd;"></i>
+                                <i class="bi bi-dice-3" style="font-size: 5vw; color: #0d6efd;"></i>
                                 <h5 class="card-title fw-bold">Make your predictions</h5>
                                 <p class="card-text text-secondary-emphasis">Choose the top ranked surfers for each
                                     event.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-12 col-xxl-3 col-xl-4 col-lg-6 col-md-8 col-sm-12 h-100">
                         <div class="card text-center mb-3">
                             <div class="card-body my-4">
-                                <i class="bi bi-fire" style="font-size: 5rem; color: #0d6efd;"></i>
+                                <i class="bi bi-fire" style="font-size: 5vw; color: #0d6efd;"></i>
                                 <h5 class="card-title fw-bold">Survive the events!</h5>
                                 <p class="card-text text-secondary-emphasis">Earn points for every correct prediction.
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-12 col-xxl-3 col-xl-4 col-lg-6 col-md-8 col-sm-12 h-100">
                         <div class="card text-center mb-3">
                             <div class="card-body my-4">
-                                <i class="bi bi-award" style="font-size: 5rem; color: #0d6efd;"></i>
+                                <i class="bi bi-award" style="font-size: 5vw; color: #0d6efd;"></i>
                                 <h5 class="card-title fw-bold">Become champion!</h5>
                                 <p class="card-text text-secondary-emphasis">Achieve the highest rank within your
                                     league.</p>
