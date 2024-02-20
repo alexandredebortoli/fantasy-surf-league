@@ -24,7 +24,7 @@ def login_view(request):
         else:
             return render(
                 request,
-                "network/login.html",
+                "pages/login.html",
                 {"message": "Invalid username and/or password."},
             )
     else:
@@ -45,15 +45,22 @@ def register(request):
         confirmation = request.POST["confirmation"]
         if password != confirmation:
             return render(
-                request, "network/register.html", {"message": "Passwords must match."}
+                request, "pages/register.html", {"message": "Passwords must match."}
             )
 
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
-        except IntegrityError:
+        except IntegrityError as error:
+            message = "Failed to create account. Try again later."
+            if "UNIQUE constraint" in str(error) and "username" in str(error):
+                message = "Username already taken."
+            elif "UNIQUE constraint" in str(error) and "email" in str(error):
+                message = "Email already taken."
             return render(
-                request, "network/register.html", {"message": "Username already taken."}
+                request,
+                "pages/register.html",
+                {"message": message},
             )
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
