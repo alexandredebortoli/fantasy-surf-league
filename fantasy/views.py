@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 
 from fantasy.models import User
 from fantasy.webscraper import scrape_events_schedule
@@ -69,6 +70,7 @@ def register(request):
         return render(request, "pages/register.html")
 
 
+@cache_page(60 * 60 * 24)
 def schedule(request):
     events = scrape_events_schedule()
     return render(request, "pages/schedule.html", {"events": events})
