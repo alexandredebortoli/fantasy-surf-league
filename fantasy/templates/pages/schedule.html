@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container">
+    <h2>2024 Championship Tour Event Schedule</h2>
+
+    <ul class="list-group list-group-flush mt-3 mb-5">
+        {% for event in events  %}
+        <li class="list-group-item py-4 d-flex justify-content-between align-items-center">
+            <div class="w-100 d-flex flex-column justify-content-between">
+                <div class="row align-items-center row-gap-3">
+                    <div class="col-12 col-md-6">
+                        <h4>#{{event.number}} <b>{{event.name}}</b></h4>
+                        <div class="text-secondary-emphasis">{{event.location}}</div>
+                    </div>
+                    <div class="col fw-bold fs-5">
+                        {{event.start_date}} - {{event.end_date}}
+                    </div>
+                </div>
+            </div>
+            {% if event.status == "Completed" %}
+            <span class="badge text-bg-primary rounded-pill">{{event.status}}</span>
+            {% elif event.status == "Standby" %}
+            <span class="badge text-bg-danger rounded-pill">{{event.status}}</span>
+            {% elif event.status == "Live" %}
+            <span class="badge text-bg-warning rounded-pill">{{event.status}}</span>
+            {% else %}
+            <span class="badge text-bg-secondary rounded-pill">{{event.status}}</span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

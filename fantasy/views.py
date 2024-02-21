@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 
 from fantasy.models import User
+from fantasy.webscraper import scrape_events_schedule
 
 
 def index(request):
@@ -66,3 +67,8 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "pages/register.html")
+
+
+def schedule(request):
+    events = scrape_events_schedule()
+    return render(request, "pages/schedule.html", {"events": events})

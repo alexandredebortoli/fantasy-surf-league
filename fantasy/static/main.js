@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (
       (href === "home" && path === "") ||
       (href === "log in" && path === "login") ||
-      (href === "register" && path === "register")
+      (href === "register" && path === "register") ||
+      (href === "schedule" && path === "schedule")
     ) {
       link.classList.add("active");
       link.setAttribute("aria-current", "page");
