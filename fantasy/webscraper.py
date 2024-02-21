@@ -129,3 +129,55 @@ def extract_events_champion(soup):
                 events_champions[str(index + 1)]["second_place"] = athlete
 
     return events_champions
+
+
+def scrape_rankings():
+    rankings_url = f"https://www.worldsurfleague.com/athletes/rankings"
+    response = requests.get(rankings_url)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    rankings_data = extract_rankings(soup)
+
+    return rankings_data
+
+
+def extract_rankings(soup):
+    rankings = []
+
+    rankings_ul = soup.find("ul", class_="athletes-tour-athletes")
+    rankings_li = rankings_ul.find_all("li")
+    for row in rankings_li:
+        athlete_rank = row.find("span", class_="athlete-rank")
+        if athlete_rank:
+            athlete_rank = athlete_rank.text.strip()
+        athlete_points = row.find("span", class_="athlete-points")
+        if athlete_points:
+            athlete_points = athlete_points.text.strip()
+        athlete_avatar = row.find("span", class_="athlete-avatar")
+        athlete_name = None
+        athlete_headshot_url = None
+        athlete_country = None
+        if athlete_avatar:
+            athlete_name = athlete_avatar.find("a", class_="athlete-name")
+            if athlete_name:
+                athlete_name = athlete_name.text.strip()
+            athlete_country = athlete_avatar.find("span", class_="athlete-country-name")
+            if athlete_country:
+                athlete_country = athlete_country.text.strip()
+            athlete_headshot_url = athlete_avatar.find("a", class_="headshot proxy-img")
+            if athlete_headshot_url:
+                athlete_headshot_url = athlete_headshot_url["data-img-src"]
+
+        athlete = {
+            "rank": athlete_rank,
+            "name": athlete_name,
+            "headshot_url": athlete_headshot_url,
+            "country": athlete_country,
+            "points": athlete_points,
+        }
+        rankings.append(athlete)
+    return rankings
+
+
+if __name__ == "__main__":
+    print(scrape_rankings())
