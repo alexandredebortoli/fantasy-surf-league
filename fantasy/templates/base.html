@@ -35,7 +35,10 @@
             <a class="nav-link" href="{% url 'events' %}">Events</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Ranking</a>
+            <a class="nav-link" href="{% url 'rankings' %}">Rankings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'surfers' %}">Surfers</a>
           </li>
           {% if user.is_authenticated %}
           <span class="nav-link">|</span>

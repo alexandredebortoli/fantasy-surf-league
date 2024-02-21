@@ -74,3 +74,12 @@ def register(request):
 def events(request):
     events = scrape_events_schedule()
     return render(request, "pages/events.html", {"events": events})
+
+
+def rankings(request):
+    return render(request, "pages/rankings.html")
+
+
+def surfers(request):
+    events = scrape_events_schedule()
+    return render(request, "pages/surfers.html")

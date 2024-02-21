@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
       (href === "log in" && path === "login") ||
       (href === "register" && path === "register") ||
       (href === "events" && path === "events") ||
-      (href === "ranking" && path === "ranking") ||
+      (href === "rankings" && path === "rankings") ||
       (href === "surfers" && path === "surfers")
     ) {
       link.classList.add("active");
