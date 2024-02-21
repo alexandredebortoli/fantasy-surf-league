@@ -41,7 +41,7 @@
             <a class="nav-link" href="{% url 'surfers' %}">Surfers</a>
           </li>
           {% if user.is_authenticated %}
-          <span class="nav-link">|</span>
+          <span class="nav-link">•</span>
           <li class="nav-item">
             <a class="nav-link" href="#"><strong>@{{ user.username }}</strong></a>
           </li>
