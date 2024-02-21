@@ -1,0 +1,69 @@
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-lg-6">
+            <h2 class="text-center mb-5">Create or Join a League!</h2>
+
+            {% if message %}
+            <div class="alert alert-danger">{{ message }}</div>
+            {% endif %}
+
+            <button type="button" class="btn btn-lg btn-primary w-100 mt-2 mb-4" data-bs-toggle="modal"
+                data-bs-target="#join-league-modal">
+                Join
+            </button>
+
+            <div class="modal fade" id="join-league-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Join League</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="join-league-form" action="{% url "join_league" %}" method="post">
+                                {% csrf_token %}
+                                <label for="league-identifier" class="form-label">Enter Invite Code</label>
+                                <input autofocus class="form-control form-control-lg mb-3" type="text"
+                                    id="league-identifier" name="code" placeholder="xxxx-xxx-xxx" required>
+                                <button id="join-btn" type="submit"
+                                    class="btn btn-primary btn-lg d-none w-100">Join</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-lg btn-outline-secondary w-100" data-bs-toggle="modal"
+                data-bs-target="#create-league-modal">
+                Create
+            </button>
+
+            <div class="modal fade" id="create-league-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Create League</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{% url "new_league" %}" method="post">
+                                {% csrf_token %}
+                                <label for="league-name" class="form-label">Name</label>
+                                <input autofocus class="form-control form-control-lg mb-3" type="text" id="league-name"
+                                    name="name" required>
+                                <label for="league-description" class="form-label">Description</label>
+                                <input autofocus class="form-control  form-control-lg mb-4" type="text"
+                                    id="league-description" name="description">
+                                <button id="create-btn" type="submit"
+                                    class="btn btn-primary btn-lg w-100">Create</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>

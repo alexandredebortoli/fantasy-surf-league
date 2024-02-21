@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block body %}
+{% if league %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-lg-5">
+            <h2>{{ league.name }}'s League</h2>
+            <h3 class="fs-5 text-secondary-emphasis">{{ league.description }}</h3>
+        </div>
+        <div class="col col-auto d-flex align-items-center">
+            <span class="fw-bold fs-5 me-3">Invite Code:</span>
+            <span class="fs-5 text-secondary-emphasis">
+                {{ league.identifier }}
+            </span>
+            </a>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center">
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                data-bs-target="#leave-league">{% if user == league.creator %}Delete League{% else %}Leave
+                League{% endif %}</button>
+
+            <div class="modal fade" id="leave-league" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body py-4">
+                            <form action="{% url "leave_league" %}" method="post">
+                                {% csrf_token %}
+                                <h4 class="text-center">
+                                    Confirm {% if user == league.creator %}Delete{% else %}Leaving{% endif %}
+                                    {{ league.name }}'s League?</h4>
+                                <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
+                                    <button type="submit" class="btn btn-outline-primary btn-lg">Yes</button>
+                                    <button type="button" class="btn btn-danger btn-lg" data-bs-dismiss="modal"
+                                        aria-label="Close">No</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=" row my-5">
+        <div class="col"></div>
+        <div class="col-lg-6 col-12">
+            <h3 class="mb-3">Leaderboard</h3>
+            <ul class="list-group">
+                {% for index, total_points, member in leaderboard %}
+                <li
+                    class="list-group-item py-3 d-flex align-items-center {% if index == 1 %}list-group-item-secondary{% endif %}">
+                    <div class="col-auto">
+                        <i class="bi bi-{{ index }}-circle {% if index == 1 %}text-primary{% endif %} fs-2"></i>
+                    </div>
+                    <div class="col ms-sm-4 ms-2 me-2 gap-2 d-flex justify-content-center align-items-center">
+                        <div class="col {% if index == 1 %}text-primary fw-bold{% endif %}">
+                            <span class="fs-5">
+                                @{{ member.username }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <span
+                            class="badge {% if index == 1 %}text-primary border border-primary{% else %}text-secondary-emphasis{% endif %}">{{ total_points }}
+                            points</span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+{% else %}
+{% include "pages/create-or-join-league.html" %}
+{% endif %}
+{% endblock %}

@@ -16,6 +16,13 @@ class User(AbstractUser):
     )
 
 
+class PredictionManager(models.Manager):
+    def total_points_for_user(self, user):
+        return self.filter(user=user).aggregate(total_points=models.Sum("points"))[
+            "total_points"
+        ]
+
+
 class Prediction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="predictions")
     event_identifier = models.IntegerField(
@@ -26,9 +33,11 @@ class Prediction(models.Model):
     second_name = models.CharField(max_length=100, null=False)
     is_first_correct = models.BooleanField(default=False)
     is_second_correct = models.BooleanField(default=False)
-    points = models.IntegerField(default=None, null=True)
+    points = models.IntegerField(default=0, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = PredictionManager()
 
     def __str__(self):
         return f"{self.user.username} - event #{self.event_identifier}"

@@ -21,10 +21,12 @@ document.addEventListener("DOMContentLoaded", function () {
       (href === "register" && path === "register") ||
       (href === "events" && path === "events") ||
       (href === "rankings" && path === "rankings") ||
-      (href === "surfers" && path === "surfers")
+      (href === "surfers" && path === "surfers") ||
+      (href === "league" && path === "league") ||
+      (href.includes("@") && path.includes("profile"))
     ) {
       link.classList.add("active");
-      link.classList.add("fw-bold");
+      if (!href.includes("@")) link.classList.add("fw-bold");
       link.setAttribute("aria-current", "page");
     } else {
       link.classList.remove("active");
@@ -48,6 +50,24 @@ document.addEventListener("DOMContentLoaded", function () {
           btn.innerHTML = "Show Results";
         }
       });
+    });
+  }
+
+  // Join League Code Input
+  const leagueId = document.getElementById("league-identifier");
+  if (leagueId) {
+    leagueId.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+      }
+    });
+    leagueId.addEventListener("input", function () {
+      var inputLength = this.value.length;
+      if (inputLength === 11) {
+        document.getElementById("join-btn").classList.remove("d-none");
+      } else {
+        document.getElementById("join-btn").classList.add("d-none");
+      }
     });
   }
 });

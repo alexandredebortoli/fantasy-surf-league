@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
 
-from fantasy.models import User
+from fantasy.models import League, Prediction, User
 from fantasy.webscraper import scrape_events_schedule, scrape_rankings, scrape_surfers
 
 
@@ -70,19 +70,84 @@ def register(request):
         return render(request, "pages/register.html")
 
 
-@cache_page(60 * 60 * 24)
 def events(request):
     events = scrape_events_schedule()
     return render(request, "pages/events.html", {"events": events})
 
 
-@cache_page(60 * 60 * 24)
 def rankings(request):
     rankings = scrape_rankings()
     return render(request, "pages/rankings.html", {"rankings": rankings})
 
 
-@cache_page(60 * 60 * 24)
 def surfers(request):
     surfers = scrape_surfers()
     return render(request, "pages/surfers.html", {"surfers": surfers})
+
+
+def league(request):
+    user = User.objects.get(pk=request.user.id)
+    if user.league:
+        league = League.objects.get(identifier=request.user.league.identifier)
+        league_members = league.members.all()
+        leaderboard = []
+        for league_member in league_members:
+            total_points = Prediction.objects.total_points_for_user(league_member)
+            leaderboard.append((total_points, league_member))
+        leaderboard.sort(key=lambda x: x[0], reverse=True)
+        leaderboard = [
+            ((index + 1), total_points, member)
+            for index, (total_points, member) in enumerate(leaderboard)
+        ]
+        print(leaderboard)
+        return render(
+            request, "pages/league.html", {"league": league, "leaderboard": leaderboard}
+        )
+    return render(request, "pages/league.html")
+
+
+def join_league(request):
+    if request.method == "POST":
+        code = request.POST["code"]
+        author = request.user
+        league = League.objects.get(identifier=code)
+        if not league:
+            return render(
+                request,
+                "pages/league.html",
+                {"message": "League not found."},
+            )
+
+        author.league = league
+        author.save()
+
+    return HttpResponseRedirect(reverse("league"))
+
+
+def new_league(request):
+    if request.method == "POST":
+        name = request.POST["name"]
+        description = request.POST["description"]
+        author = User.objects.get(pk=request.user.id)
+        league = League(name=name, description=description, creator=author)
+        league.save()
+        author.league = league
+        author.save()
+
+    return HttpResponseRedirect(reverse("league"))
+
+
+def leave_league(request):
+    if request.method == "POST":
+        author = User.objects.get(pk=request.user.id)
+        league = League.objects.get(pk=author.league.id)
+        if league.creator == author:
+            league.delete()
+        author.league = None
+        author.save()
+
+    return HttpResponseRedirect(reverse("league"))
+
+
+def profile(request, username):
+    return render(request, "pages/profile.html", {"user": request.user})

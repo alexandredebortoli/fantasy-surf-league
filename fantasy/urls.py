@@ -11,4 +11,9 @@ urlpatterns = [
     path("events", views.events, name="events"),
     path("rankings", views.rankings, name="rankings"),
     path("surfers", views.surfers, name="surfers"),
+    path("league", views.league, name="league"),
+    path("join-league", views.join_league, name="join_league"),
+    path("new-league", views.new_league, name="new_league"),
+    path("leave-league", views.leave_league, name="leave_league"),
+    path("profile/<str:username>", views.profile, name="profile"),
 ]
