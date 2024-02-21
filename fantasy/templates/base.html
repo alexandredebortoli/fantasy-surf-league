@@ -32,7 +32,7 @@
             <a class="nav-link" href="{% url 'index' %}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'schedule' %}">Schedule</a>
+            <a class="nav-link" href="{% url 'events' %}">Events</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Ranking</a>
@@ -70,23 +70,22 @@
 
   <div class="body">{% block body %} {% endblock %}</div>
 
-
   <footer class="bg-body-tertiary mt-auto">
     <div class="row">
       <div class="col"></div>
       <div class="col-6 text-center p-3">
-        © 2024 All rights reserved | Created by Alexandre Debortoli <i class="bi bi-code-slash"></i>
+        © 2024 All rights reserved | Created by Alexandre Debortoli
+        <i class="bi bi-code-slash"></i>
       </div>
       <div class="col d-flex justify-content-end align-items-center gap-3">
         <a class="text-secondary" href="https://github.com/alexandredebortoli" target="_blank"
-          style="font-size: 2rem;"><i class="bi bi-github"></i></a>
+          style="font-size: 2rem"><i class="bi bi-github"></i></a>
         <a class="text-secondary" href="https://www.linkedin.com/in/alexandredds" target="_blank"
-          style="font-size: 2rem;"><i class="bi bi-linkedin"></i></a>
+          style="font-size: 2rem"><i class="bi bi-linkedin"></i></a>
         <div></div>
       </div>
     </div>
   </footer>
-
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">

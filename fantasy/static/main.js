@@ -19,7 +19,9 @@ document.addEventListener("DOMContentLoaded", function () {
       (href === "home" && path === "") ||
       (href === "log in" && path === "login") ||
       (href === "register" && path === "register") ||
-      (href === "schedule" && path === "schedule")
+      (href === "events" && path === "events") ||
+      (href === "ranking" && path === "ranking") ||
+      (href === "surfers" && path === "surfers")
     ) {
       link.classList.add("active");
       link.classList.add("fw-bold");

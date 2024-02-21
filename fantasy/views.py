@@ -71,6 +71,6 @@ def register(request):
 
 
 @cache_page(60 * 60 * 24)
-def schedule(request):
+def events(request):
     events = scrape_events_schedule()
-    return render(request, "pages/schedule.html", {"events": events})
+    return render(request, "pages/events.html", {"events": events})
