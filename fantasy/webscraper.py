@@ -179,5 +179,37 @@ def extract_rankings(soup):
     return rankings
 
 
-if __name__ == "__main__":
-    print(scrape_rankings())
+def scrape_surfers():
+    surfers_url = f"https://www.worldsurfleague.com/athletes?tourIds%5B%5D=1"
+    response = requests.get(surfers_url)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    surfers_data = extract_surfers(soup)
+
+    return surfers_data
+
+
+def extract_surfers(soup):
+    surfers_list = []
+
+    surfers = soup.find_all("div", class_="avatar")
+
+    if surfers:
+        for surfer in surfers:
+            headshot_url = surfer.find("a", class_="headshot")
+            if headshot_url:
+                headshot_url = headshot_url["data-img-src"]
+            name = surfer.find("a", class_="athlete-name")
+            if name:
+                name = name.text.strip()
+            country = surfer.find("span", class_="athlete-country-name")
+            if country:
+                country = country.text.strip()
+
+            athlete = {
+                "name": name,
+                "headshot_url": headshot_url,
+                "country": country,
+            }
+            surfers_list.append(athlete)
+    return surfers_list
