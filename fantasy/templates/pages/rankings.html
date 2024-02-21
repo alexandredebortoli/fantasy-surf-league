@@ -3,5 +3,42 @@
 {% block body %}
 <div class="container">
     <h2>2024 Championship Tour Rankings</h2>
+
+    <div class="row my-5">
+        <div class="col"></div>
+        <div class="col-6">
+            <ul class="list-group">
+                {% for athlete in rankings  %}
+                <li
+                    class="list-group-item py-3 d-flex align-items-center {% if athlete.rank == "1" %}list-group-item-secondary{% endif %}">
+                    <div class="col-auto">
+                        <i
+                            class="bi bi-{{ athlete.rank }}-circle {% if athlete.rank == "1" %}text-primary{% endif %} fs-2"></i>
+                    </div>
+                    <div class="col ms-5 gap-2 d-flex justify-content-center align-items-center">
+                        <div class="col-auto">
+                            <img class=" rounded-circle img-fluid" src="{{ athlete.headshot_url }}"
+                                alt="{{ athlete.name }}">
+                        </div>
+                        <div class="col {% if athlete.rank == "1" %}text-primary fw-bold{% endif %}">
+                            <span class="fs-5">
+                                {{ athlete.name }}
+                            </span>
+                            <br>
+                            <small class="text-secondary-emphasis"><i class="bi bi-geo"></i>
+                                {{ athlete.country }}</small>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <span
+                            class="badge fs-6 {% if athlete.rank == "1" %}text-primary border border-primary{% endif %}">{{ athlete.points }}
+                            points</span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col"></div>
+    </div>
 </div>
 {% endblock %}
