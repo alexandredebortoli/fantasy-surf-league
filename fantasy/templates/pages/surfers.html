@@ -3,5 +3,18 @@
 {% block body %}
 <div class="container">
     <h2>2024 Championship Tour Athletes</h2>
+
+    <div class="row my-5">
+        {% for surfer in surfers  %}
+        <div
+            class="col-12 col-xl-3 col-lg-4 col-sm-6 row-gap-3 mb-4 d-flex flex-column justify-content-center align-items-center">
+            <img class="img-fluid rounded-circle border" src="{{surfer.headshot_url}}" alt="{{surfer.name}}">
+            <div class="text-center">
+                <h5>{{ surfer.name }}</h5>
+                <p><small class="text-body-secondary"><i class="bi bi-geo"></i>{{surfer.country}}</small></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views.decorators.cache import cache_page
 
 from fantasy.models import User
-from fantasy.webscraper import scrape_events_schedule, scrape_rankings
+from fantasy.webscraper import scrape_events_schedule, scrape_rankings, scrape_surfers
 
 
 def index(request):
@@ -82,6 +82,7 @@ def rankings(request):
     return render(request, "pages/rankings.html", {"rankings": rankings})
 
 
+@cache_page(60 * 60 * 24)
 def surfers(request):
-    events = scrape_events_schedule()
-    return render(request, "pages/surfers.html")
+    surfers = scrape_surfers()
+    return render(request, "pages/surfers.html", {"surfers": surfers})
