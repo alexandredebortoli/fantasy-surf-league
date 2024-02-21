@@ -6,14 +6,23 @@ current_year = "2024"
 
 
 def scrape_events_schedule():
-    url = f"https://www.worldsurfleague.com/events/{current_year}/ct?all=1"
-    response = requests.get(url)
+    events_url = f"https://www.worldsurfleague.com/events/{current_year}/ct?all=1"
+    event_ranking_url = (
+        f"https://www.worldsurfleague.com/athletes/tour/mct?year={current_year}"
+    )
+    response = requests.get(events_url)
     soup = BeautifulSoup(response.text, "html.parser")
 
     event_schedule_data = extract_events_schedule(soup)
+
+    response = requests.get(event_ranking_url)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    events_ranking_data = extract_events_champion(soup)
+
     test = []
     for event in event_schedule_data:
-        test.append(format_event(event))
+        test.append(format_event(event, events_ranking_data))
     return test
 
 
@@ -39,7 +48,7 @@ def extract_events_schedule(soup):
     return events
 
 
-def format_event(event):
+def format_event(event, events_ranking):
     start_date_str, end_date_str = event["date"].split(" - ")
 
     start_date = datetime.strptime(
@@ -65,8 +74,58 @@ def format_event(event):
         "status": event["status"],
     }
 
+    if event["status"] == "Completed":
+        formatted_event["first_place"] = events_ranking[str(event["number"])][
+            "first_place"
+        ]
+        formatted_event["second_place"] = events_ranking[str(event["number"])][
+            "second_place"
+        ]
+
     return formatted_event
 
 
 def format_date_str_month_day(date):
     return datetime.strptime(date, "%Y-%m-%d").strftime("%b %d")
+
+
+def extract_events_champion(soup):
+    events_champions = {
+        "1": {},
+        "2": {},
+        "3": {},
+        "4": {},
+        "5": {},
+        "6": {},
+        "7": {},
+        "8": {},
+        "9": {},
+        "10": {},
+    }
+
+    event_table_body = soup.find("tbody")
+    event_table_rows = event_table_body.find_all("tr")
+    for row in event_table_rows:
+        athlete_headshot_url = row.find("a", class_="headshot proxy-img")
+        if athlete_headshot_url:
+            athlete_headshot_url = athlete_headshot_url["data-img-src"]
+        athlete_name = row.find("a", class_="athlete-name")
+        if athlete_name:
+            athlete_name = athlete_name.text
+        athlete_country = row.find("span", class_="athlete-country-name")
+        if athlete_country:
+            athlete_country = athlete_country.text
+        athlete = {
+            "name": athlete_name,
+            "country": athlete_country,
+            "headshot_url": athlete_headshot_url,
+        }
+
+        placements = row.find_all("td", class_="athlete-event-place")
+        for index, placement in enumerate(placements):
+            if placement.text.strip() == "10,000":
+                events_champions[str(index + 1)]["first_place"] = athlete
+            elif placement.text.strip() == "7,800":
+                events_champions[str(index + 1)]["second_place"] = athlete
+
+    return events_champions
