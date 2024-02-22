@@ -16,4 +16,5 @@ urlpatterns = [
     path("new-league", views.new_league, name="new_league"),
     path("leave-league", views.leave_league, name="leave_league"),
     path("profile/<str:username>", views.profile, name="profile"),
+    path("save_prediction", views.save_prediction, name="save_prediction"),
 ]

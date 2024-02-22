@@ -70,4 +70,29 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  // Profile - Event Selection Dropdown
+  const currentEvent = document.getElementById("current-event-select");
+
+  if (currentEvent) {
+    const dropdownItems = document.querySelectorAll(".event-select");
+
+    dropdownItems.forEach((item) => {
+      item.addEventListener("click", function () {
+        currentEvent.innerText = item.innerText;
+        item.classList.add("disabled");
+        item.setAttribute("aria-disabled", "true");
+        profileDropdownActive(dropdownItems, item);
+      });
+    });
+  }
 });
+
+function profileDropdownActive(dropdownItems, activeItem) {
+  dropdownItems.forEach((item) => {
+    if (item === activeItem) return;
+
+    item.classList.remove("disabled");
+    item.removeAttribute("aria-disabled");
+  });
+}

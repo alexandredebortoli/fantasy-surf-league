@@ -14,7 +14,7 @@
                     friends in
                     the ultimate showdown.</p>
                 {% if user.is_authenticated %}
-                <a href="#">
+                <a href="{% url 'profile' user.username %}">
                     <button class="btn btn-lg btn-primary w-100 play-now">Play now!</button>
                 </a>
                 {% else %}

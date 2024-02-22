@@ -88,6 +88,8 @@ def surfers(request):
 
 
 def league(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
     user = User.objects.get(pk=request.user.id)
     if user.league:
         league = League.objects.get(identifier=request.user.league.identifier)
@@ -152,11 +154,30 @@ def leave_league(request):
 
 
 def profile(request, username):
-    user = User.objects.get(username=username)
-    total_points = total_points = Prediction.objects.total_points_for_user(user)
-    join_date = user.date_joined.strftime("%b %d, %Y")
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+    profile_user = User.objects.get(username=username)
+    total_points = total_points = Prediction.objects.total_points_for_user(profile_user)
+    join_date = profile_user.date_joined.strftime("%b %d, %Y")
+    events = scrape_events_schedule()
+    surfers = scrape_surfers()
+    predictions = Prediction.objects.filter(user=profile_user).order_by(
+        "event_identifier"
+    )
     return render(
         request,
         "pages/profile.html",
-        {"user": user, "total_points": total_points, "join_date": join_date},
+        {
+            "profile_user": profile_user,
+            "total_points": total_points,
+            "join_date": join_date,
+            "event_range": range(1, 11),
+            "event": events[0],
+            "surfers": surfers,
+            "predictions": predictions,
+        },
     )
+
+
+def save_prediction(request):
+    return HttpResponseRedirect(reverse("profile", args=(request.user.username,)))
