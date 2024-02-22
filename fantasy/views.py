@@ -5,6 +5,8 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
 
+from datetime import datetime
+
 from fantasy.models import League, Prediction, User
 from fantasy.webscraper import scrape_events_schedule, scrape_rankings, scrape_surfers
 
@@ -150,4 +152,11 @@ def leave_league(request):
 
 
 def profile(request, username):
-    return render(request, "pages/profile.html", {"user": request.user})
+    user = User.objects.get(username=username)
+    total_points = total_points = Prediction.objects.total_points_for_user(user)
+    join_date = user.date_joined.strftime("%b %d, %Y")
+    return render(
+        request,
+        "pages/profile.html",
+        {"user": user, "total_points": total_points, "join_date": join_date},
+    )
