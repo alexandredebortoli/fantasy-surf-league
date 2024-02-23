@@ -23,7 +23,8 @@
                                 <div class="w-100 d-flex align-items-center gap-2">
                                     <div class="col-auto">
                                         <img class="rounded-circle img-fluid" src="{{ event.first_place.headshot_url }}"
-                                            alt="{{ event.first_place.name }}">
+                                            alt="{{ event.first_place.name }}"
+                                            style="max-width: 64px; max-height: 64px;">
                                     </div>
                                     <div class="col">
                                         {{ event.first_place.name }}
@@ -39,7 +40,8 @@
                                     <div class="col-auto">
                                         <img class=" rounded-circle img-fluid"
                                             src="{{ event.second_place.headshot_url }}"
-                                            alt="{{ event.second_place.name }}">
+                                            alt="{{ event.second_place.name }}"
+                                            style="max-width: 64px; max-height: 64px;">
                                     </div>
                                     <div class="col">
                                         {{ event.second_place.name }}

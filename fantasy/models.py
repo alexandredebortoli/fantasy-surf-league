@@ -25,14 +25,21 @@ class PredictionManager(models.Manager):
 
 class Prediction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="predictions")
-    event_identifier = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)],
-        null=False,
+    event = models.ForeignKey(
+        "Event", on_delete=models.CASCADE, related_name="predictions"
     )
-    first_name = models.CharField(max_length=100, null=False)
-    second_name = models.CharField(max_length=100, null=False)
-    is_first_correct = models.BooleanField(default=False)
-    is_second_correct = models.BooleanField(default=False)
+    first = models.ForeignKey(
+        "Surfer",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="predictions_first",
+    )
+    second = models.ForeignKey(
+        "Surfer",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="predictions_second",
+    )
     points = models.IntegerField(default=0, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -40,7 +47,7 @@ class Prediction(models.Model):
     objects = PredictionManager()
 
     def __str__(self):
-        return f"{self.user.username} - event #{self.event_identifier}"
+        return f"{self.user.username} - event #{self.event.number}"
 
 
 class League(models.Model):
@@ -58,11 +65,6 @@ class League(models.Model):
     def __str__(self):
         return f"{self.name} - Join #{self.identifier}"
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.generate_identifier()
-        super().save(*args, **kwargs)
-
     def generate_identifier(self):
         league_uuid = str(uuid.uuid4())
         random_chars = "".join(random.sample(league_uuid.replace("-", ""), 9))
@@ -74,3 +76,43 @@ class League(models.Model):
         if not self.id:
             self.generate_identifier()
         super().save(*args, **kwargs)
+
+
+class Surfer(models.Model):
+    name = models.CharField(max_length=100, null=False, unique=True)
+    headshot_url = models.URLField(max_length=200, null=False)
+    country = models.CharField(max_length=100, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.id}: {self.name}"
+
+
+class Event(models.Model):
+    name = models.CharField(max_length=100, null=False)
+    location = models.CharField(max_length=100, null=False)
+    start_date = models.DateField(null=False)
+    end_date = models.DateField(null=False)
+    number = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        null=False,
+    )
+    status = models.CharField(max_length=100, null=False)
+    first_place = models.ForeignKey(
+        Surfer,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="first_place",
+    )
+    second_place = models.ForeignKey(
+        Surfer,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="second_place",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.location}"

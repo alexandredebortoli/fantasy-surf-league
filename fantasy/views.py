@@ -7,7 +7,7 @@ from django.views.decorators.cache import cache_page
 
 from datetime import datetime
 
-from fantasy.models import League, Prediction, User
+from fantasy.models import *
 from fantasy.webscraper import scrape_events_schedule, scrape_rankings, scrape_surfers
 
 
@@ -73,7 +73,8 @@ def register(request):
 
 
 def events(request):
-    events = scrape_events_schedule()
+    # events = scrape_events_schedule()
+    events = Event.objects.all()
     return render(request, "pages/events.html", {"events": events})
 
 
@@ -83,7 +84,8 @@ def rankings(request):
 
 
 def surfers(request):
-    surfers = scrape_surfers()
+    # surfers = scrape_surfers()
+    surfers = Surfer.objects.all()
     return render(request, "pages/surfers.html", {"surfers": surfers})
 
 
@@ -92,7 +94,7 @@ def league(request):
         return HttpResponseRedirect(reverse("login"))
     user = User.objects.get(pk=request.user.id)
     if user.league:
-        league = League.objects.get(identifier=request.user.league.identifier)
+        league = League.objects.get(pk=user.league.id)
         league_members = league.members.all()
         leaderboard = []
         for league_member in league_members:
@@ -159,10 +161,12 @@ def profile(request, username):
     profile_user = User.objects.get(username=username)
     total_points = total_points = Prediction.objects.total_points_for_user(profile_user)
     join_date = profile_user.date_joined.strftime("%b %d, %Y")
-    events = scrape_events_schedule()
-    surfers = scrape_surfers()
+    # events = scrape_events_schedule()
+    events = Event.objects.all()
+    # surfers = scrape_surfers()
+    surfers = Surfer.objects.all()
     predictions = Prediction.objects.filter(user=profile_user).order_by(
-        "event_identifier"
+        "event__event_number"
     )
     return render(
         request,
