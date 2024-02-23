@@ -115,4 +115,20 @@ class Event(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name} - {self.location}"
+        return f"Event #{self.number}: {self.name} - {self.location}"
+
+
+class Ranking(models.Model):
+    surfer = models.ForeignKey(
+        Surfer, on_delete=models.CASCADE, related_name="rankings"
+    )
+    rank = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        null=False,
+    )
+    points = models.CharField(max_length=7, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.surfer.name} - Rank #{self.rank}"

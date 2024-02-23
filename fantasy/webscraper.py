@@ -1,6 +1,9 @@
-import requests
+from django.core.cache import cache
+from functools import wraps
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
+
+import requests
 
 current_year = "2024"
 
@@ -66,12 +69,14 @@ def format_event(event, events_ranking):
         ).strftime("%Y-%m-%d")
 
     formatted_event = {
-        "start_date": format_date_str_month_day(start_date),
-        "end_date": format_date_str_month_day(end_date),
+        "start_date": start_date,
+        "end_date": end_date,
         "name": event["name"],
         "location": event["location"],
         "number": event["number"],
         "status": event["status"],
+        "first_place": None,
+        "second_place": None,
     }
 
     if event["status"] == "Completed":
@@ -106,27 +111,16 @@ def extract_events_champion(soup):
     event_table_body = soup.find("tbody")
     event_table_rows = event_table_body.find_all("tr")
     for row in event_table_rows:
-        athlete_headshot_url = row.find("a", class_="headshot proxy-img")
-        if athlete_headshot_url:
-            athlete_headshot_url = athlete_headshot_url["data-img-src"]
         athlete_name = row.find("a", class_="athlete-name")
         if athlete_name:
             athlete_name = athlete_name.text
-        athlete_country = row.find("span", class_="athlete-country-name")
-        if athlete_country:
-            athlete_country = athlete_country.text
-        athlete = {
-            "name": athlete_name,
-            "country": athlete_country,
-            "headshot_url": athlete_headshot_url,
-        }
 
         placements = row.find_all("td", class_="athlete-event-place")
         for index, placement in enumerate(placements):
             if placement.text.strip() == "10,000":
-                events_champions[str(index + 1)]["first_place"] = athlete
+                events_champions[str(index + 1)]["first_place"] = athlete_name
             elif placement.text.strip() == "7,800":
-                events_champions[str(index + 1)]["second_place"] = athlete
+                events_champions[str(index + 1)]["second_place"] = athlete_name
 
     return events_champions
 
@@ -161,18 +155,10 @@ def extract_rankings(soup):
             athlete_name = athlete_avatar.find("a", class_="athlete-name")
             if athlete_name:
                 athlete_name = athlete_name.text.strip()
-            athlete_country = athlete_avatar.find("span", class_="athlete-country-name")
-            if athlete_country:
-                athlete_country = athlete_country.text.strip()
-            athlete_headshot_url = athlete_avatar.find("a", class_="headshot proxy-img")
-            if athlete_headshot_url:
-                athlete_headshot_url = athlete_headshot_url["data-img-src"]
 
         athlete = {
             "rank": athlete_rank,
             "name": athlete_name,
-            "headshot_url": athlete_headshot_url,
-            "country": athlete_country,
             "points": athlete_points,
         }
         rankings.append(athlete)

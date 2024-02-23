@@ -1,17 +1,18 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.views.decorators.cache import cache_page
-
-from datetime import datetime
 
 from fantasy.models import *
-from fantasy.webscraper import scrape_events_schedule, scrape_rankings, scrape_surfers
+from fantasy.task import scrape_and_update_data
+from fantasy.webscraper import (
+    scrape_rankings,
+)
 
 
 def index(request):
+    scrape_and_update_data()
     return render(request, "pages/index.html")
 
 
@@ -73,18 +74,16 @@ def register(request):
 
 
 def events(request):
-    # events = scrape_events_schedule()
     events = Event.objects.all()
     return render(request, "pages/events.html", {"events": events})
 
 
 def rankings(request):
-    rankings = scrape_rankings()
+    rankings = Ranking.objects.all().order_by("rank")
     return render(request, "pages/rankings.html", {"rankings": rankings})
 
 
 def surfers(request):
-    # surfers = scrape_surfers()
     surfers = Surfer.objects.all()
     return render(request, "pages/surfers.html", {"surfers": surfers})
 
@@ -99,13 +98,14 @@ def league(request):
         leaderboard = []
         for league_member in league_members:
             total_points = Prediction.objects.total_points_for_user(league_member)
+            if not total_points:
+                total_points = 0
             leaderboard.append((total_points, league_member))
         leaderboard.sort(key=lambda x: x[0], reverse=True)
         leaderboard = [
             ((index + 1), total_points, member)
             for index, (total_points, member) in enumerate(leaderboard)
         ]
-        print(leaderboard)
         return render(
             request, "pages/league.html", {"league": league, "leaderboard": leaderboard}
         )
