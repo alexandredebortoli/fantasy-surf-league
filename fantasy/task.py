@@ -65,3 +65,18 @@ def scrape_and_update_data():
             points=rank["points"],
         )
         new_rank.save()
+
+    users = User.objects.all()
+    for user in users:
+        predictions = Prediction.objects.filter(user=user)
+        for prediction in predictions:
+            if prediction.event.status == "Completed":
+                prediction.points = 0
+                if prediction.first == prediction.event.first_place:
+                    prediction.points += 200
+                if prediction.second == prediction.event.second_place:
+                    prediction.points += 100
+                if prediction.points == 300:
+                    prediction.points += 100
+
+                prediction.save()

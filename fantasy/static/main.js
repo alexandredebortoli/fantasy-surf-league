@@ -121,6 +121,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         event.preventDefault();
         alert("Please select both first and second place.");
       }
+
+      if (firstPlace.value == secondPlace.value) {
+        event.preventDefault();
+        alert("Please select different values for first and second place.");
+      }
     });
   }
 });
@@ -230,7 +235,12 @@ async function getCurrentEventPrediction(predictions, currentEvent, surfers) {
     (prediction) => prediction.fields.event === currentEvent.pk
   );
 
+  const predictionPoints = document.getElementById("prediction-points");
+  predictionPoints.innerText = "0 Points";
+
   if (currentEventPredictions) {
+    predictionPoints.innerText = `${currentEventPredictions.fields.points} Points`;
+
     first = surfers.find(
       (surfer) => surfer.pk === currentEventPredictions.fields.first
     );

@@ -126,14 +126,14 @@
                     <div class="d-flex align-items-center justify-content-between my-2 fs-5">
                         <div class="d-flex align-items-center">
                             <div class="fs-5 me-3">Points: </div>
-                            {% if profile_user.league %}<span class="badge text-bg-primary fs-5">0
+                            <span id="prediction-points"
+                                class="badge text-bg-primary fs-5">{% if prediction %}{{prediction.points}}{% else %}0{% endif %}
                                 Points</span>
-                            {% else %}--{% endif %}
                         </div>
                         {% if profile_user == user %}
                         <button id="new-prediction-btn" type="button" class="btn btn-primary" data-bs-toggle="modal"
                             data-bs-target="#edit-prediction"
-                            {% if event.status == "Completed" and not prediction %}disabled{% endif %}>New</button>
+                            {% if event.status == "Completed" %}disabled{% endif %}>New</button>
 
                         <div class="modal fade" id="edit-prediction" tabindex="-1" aria-labelledby="editPrediction"
                             aria-hidden="true">
@@ -201,7 +201,7 @@
                                 <small class="text-secondary-emphasis fs-6"><i
                                         class="bi bi-geo"></i>{% if prediction %}{{ prediction.first.country }}{% else %}--{% endif %}</small>
                                 {% if prediction and event.status == "Completed" %}
-                                {% if event.first_place == prediction.second %}
+                                {% if event.first_place == prediction.first %}
                                 <i class="bi bi-check-circle-fill text-success fs-1"></i>
                                 {% else %}
                                 <i class="bi bi-x-circle-fill text-danger fs-1"></i>
