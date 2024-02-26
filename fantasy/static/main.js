@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   // Set the theme according to user preference
   const prefersLightScheme = window.matchMedia("(prefers-color-scheme: light)");
 
@@ -71,18 +71,41 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Profile - Event Selection Dropdown
-  const currentEvent = document.getElementById("current-event-select");
+  // Profile - Predictions
+  const selectedEvent = document.getElementById("current-event-select");
 
-  if (currentEvent) {
+  if (selectedEvent) {
+    const csrfToken = document.querySelector(
+      "[name=csrfmiddlewaretoken]"
+    ).value;
     const dropdownItems = document.querySelectorAll(".event-select");
+    const events = await fetchApi("events", csrfToken);
+    const predictions = await fetchApi("predictions", csrfToken);
+    const surfers = await fetchApi("surfers", csrfToken);
 
     dropdownItems.forEach((item) => {
-      item.addEventListener("click", function () {
-        currentEvent.innerText = item.innerText;
+      item.addEventListener("click", async function () {
+        // Event Dropdown
+        selectedEvent.innerText = item.innerText;
         item.classList.add("disabled");
         item.setAttribute("aria-disabled", "true");
         profileDropdownActive(dropdownItems, item);
+        // Event Detail
+        const currentEventNumber = selectedEvent.innerText.split("#")[1];
+        const currentEvent = await getCurrentEvent(
+          events,
+          currentEventNumber,
+          surfers
+        );
+        if (currentEvent.fields.status === "Completed")
+          document
+            .getElementById("new-prediction-btn")
+            .setAttribute("disabled", "true");
+        else
+          document
+            .getElementById("new-prediction-btn")
+            .removeAttribute("disabled");
+        await getCurrentEventPrediction(predictions, currentEvent, surfers);
       });
     });
   }
@@ -95,4 +118,183 @@ function profileDropdownActive(dropdownItems, activeItem) {
     item.classList.remove("disabled");
     item.removeAttribute("aria-disabled");
   });
+}
+
+async function getCurrentEvent(events, currentEventNumber, surfers) {
+  const currentEvent = await events.find(
+    (event) => event.fields.number == currentEventNumber
+  );
+
+  if (!currentEvent) {
+    alert(`Failed to load selected event`);
+    return;
+  }
+
+  const eventTitle = document.getElementById("current-event-title");
+  const eventLocation = document.getElementById("current-event-location");
+
+  eventTitle.innerHTML = `
+  #${currentEvent.fields.number} <b class="me-2">${currentEvent.fields.name}</b>
+  <span class="badge ${
+    currentEvent.fields.status == "Completed"
+      ? "text-bg-primary"
+      : currentEvent.fields.status == "Standby"
+      ? "text-bg-danger"
+      : currentEvent.fields.status == "Live"
+      ? "text-bg-warning"
+      : "text-bg-secondary"
+  } rounded-pill fs-6">${currentEvent.fields.status}</span>
+  `;
+
+  eventLocation.innerText = currentEvent.fields.location;
+
+  const toggleBtn = document.getElementById(`toggle-result`);
+  if (toggleBtn) {
+    toggleBtn.remove();
+    document.getElementById(`result-event`).remove();
+  }
+  const currentEventDiv = document.getElementById("current-event");
+  if (
+    currentEvent.fields.status === "Completed" &&
+    currentEvent.fields.first_place &&
+    currentEvent.fields.second_place
+  ) {
+    const first = surfers.find(
+      (surfer) => surfer.pk === currentEvent.fields.first_place
+    );
+    const second = surfers.find(
+      (surfer) => surfer.pk === currentEvent.fields.second_place
+    );
+    currentEventDiv.innerHTML += `
+            <a id="toggle-result" class="btn btn-outline-primary mt-3 show-results"
+                data-bs-toggle="collapse" href="#result-event" role="button" aria-expanded="false">
+                Show Results
+            </a>
+            <div class="row collapse mt-4 gap-4" id="result-event">
+                <div class="col-xl-12 col-12 d-flex align-items-center gap-3">
+                    <i class="bi bi-1-circle text-primary fs-2"></i>
+                    <div class="w-100 d-flex align-items-center gap-2">
+                        <div class="col-auto">
+                            <img class="rounded-circle img-fluid" src="${first.fields.headshot_url}"
+                                alt="${first.fields.name}" style="max-width: 64px; max-height: 64px;">
+                        </div>
+                        <div class="col">
+                            ${first.fields.name}
+                            <br>
+                            <small class="text-secondary-emphasis"><i class="bi bi-geo"></i>
+                            ${first.fields.country}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col d-flex align-items-center gap-3">
+                    <i class="bi bi-2-circle text-danger fs-2"></i>
+                    <div class="w-100 d-flex align-items-center gap-2">
+                        <div class="col-auto">
+                            <img class=" rounded-circle img-fluid" src="${second.fields.headshot_url}"
+                                alt="${second.fields.name}" style="max-width: 64px; max-height: 64px;">
+                        </div>
+                        <div class="col">
+                        ${second.fields.name}
+                            <br>
+                            <small class="text-secondary-emphasis"><i class="bi bi-geo"></i>
+                            ${second.fields.country}</small>
+                        </div>
+                    </div>
+                </div>
+    `;
+  }
+
+  return currentEvent;
+}
+
+async function getCurrentEventPrediction(predictions, currentEvent, surfers) {
+  const currentEventPredictions = predictions.find(
+    (prediction) => prediction.fields.event === currentEvent.pk
+  );
+
+  if (currentEventPredictions) {
+    first = surfers.find(
+      (surfer) => surfer.pk === currentEventPredictions.fields.first
+    );
+    second = surfers.find(
+      (surfer) => surfer.pk === currentEventPredictions.fields.second
+    );
+
+    document.getElementById("first-prediction").innerHTML = `
+      <i class="bi bi-1-square fs-2"></i>
+      <img class="img-fluid" src="${first.fields.headshot_url}"
+          alt="surfer profile photo" style="max-width: 64px; max-height: 64px;">
+      ${first.fields.name}
+      <br>
+      <small class="text-secondary-emphasis fs-6"><i class="bi bi-geo"></i>${
+        first.fields.country
+      }</small>
+      <i class="bi ${
+        currentEvent.fields.status === "Completed"
+          ? first.pk == currentEvent.fields.first_place
+            ? "bi-check-circle-fill text-success"
+            : "bi-x-circle-fill text-danger"
+          : "bi-dash-circle-dotted text-secondary"
+      } fs-1"></i>
+    `;
+
+    document.getElementById("second-prediction").innerHTML = `
+      <i class="bi bi-2-square fs-2"></i>
+      <img class="img-fluid" src="${second.fields.headshot_url}"
+          alt="surfer profile photo" style="max-width: 64px; max-height: 64px;">
+      <div>${second.fields.name}</div>
+      <br>
+      <small class="text-secondary-emphasis fs-6"><i class="bi bi-geo"></i>${
+        second.fields.country
+      }</small>
+      <i class="bi ${
+        currentEvent.fields.status === "Completed"
+          ? second.pk == currentEvent.fields.second_place
+            ? "bi-check-circle-fill text-success"
+            : "bi-x-circle-fill text-danger"
+          : "bi-dash-circle-dotted text-secondary"
+      } fs-1"></i>
+    `;
+  } else {
+    document.getElementById("first-prediction").innerHTML = `
+      <i class="bi bi-1-square fs-2"></i>
+      <img class="img-fluid" src="${staticUrl}"
+          alt="surfer profile photo" style="max-width: 64px; max-height: 64px;">
+      --
+      <br>
+      <small class="text-secondary-emphasis fs-6"><i class="bi bi-geo"></i>--</small>
+      <i class="bi bi-dash-circle-dotted text-secondary fs-1"></i>
+    `;
+
+    document.getElementById("second-prediction").innerHTML = `
+      <i class="bi bi-2-square fs-2"></i>
+      <img class="img-fluid" src="${staticUrl}"
+          alt="surfer profile photo" style="max-width: 64px; max-height: 64px;">
+      --
+      <br>
+      <small class="text-secondary-emphasis fs-6"><i class="bi bi-geo"></i>--</small>
+      <i class="bi bi-dash-circle-dotted text-secondary fs-1"></i>
+    `;
+  }
+}
+
+async function fetchApi(uri, csrfToken) {
+  const response = fetch(`http://127.0.0.1:8000/api/${uri}`, {
+    method: "GET",
+    headers: { "Content-type": "application/json", "X-CSRFToken": csrfToken },
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(`Failed to load predictions`);
+    })
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+
+  return response;
 }

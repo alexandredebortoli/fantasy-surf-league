@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+from django.core.serializers import serialize
+import json
 
 from fantasy.models import *
 from fantasy.task import scrape_and_update_data
@@ -160,14 +162,18 @@ def profile(request, username):
         return HttpResponseRedirect(reverse("login"))
     profile_user = User.objects.get(username=username)
     total_points = total_points = Prediction.objects.total_points_for_user(profile_user)
+    if not total_points:
+        total_points = 0
     join_date = profile_user.date_joined.strftime("%b %d, %Y")
-    # events = scrape_events_schedule()
-    events = Event.objects.all()
-    # surfers = scrape_surfers()
+    first_event = Event.objects.get(number=1)
     surfers = Surfer.objects.all()
-    predictions = Prediction.objects.filter(user=profile_user).order_by(
-        "event__event_number"
-    )
+    try:
+        first_event_prediction = Prediction.objects.get(
+            user=profile_user, event=first_event
+        )
+    except:
+        first_event_prediction = None
+
     return render(
         request,
         "pages/profile.html",
@@ -176,12 +182,36 @@ def profile(request, username):
             "total_points": total_points,
             "join_date": join_date,
             "event_range": range(1, 11),
-            "event": events[0],
+            "event": first_event,
             "surfers": surfers,
-            "predictions": predictions,
+            "prediction": first_event_prediction,
         },
     )
 
 
 def save_prediction(request):
     return HttpResponseRedirect(reverse("profile", args=(request.user.username,)))
+
+
+def get_events(request):
+    events = Event.objects.all()
+    serialized_data = serialize("json", events)
+    serialized_data = json.loads(serialized_data)
+    serialized_data
+    return JsonResponse(serialized_data, safe=False, status=200)
+
+
+def get_predictions(request):
+    predictions = Prediction.objects.filter(user=request.user)
+    serialized_data = serialize("json", predictions)
+    serialized_data = json.loads(serialized_data)
+    serialized_data
+    return JsonResponse(serialized_data, safe=False, status=200)
+
+
+def get_surfers(request):
+    surfers = Surfer.objects.all()
+    serialized_data = serialize("json", surfers)
+    serialized_data = json.loads(serialized_data)
+    serialized_data
+    return JsonResponse(serialized_data, safe=False, status=200)

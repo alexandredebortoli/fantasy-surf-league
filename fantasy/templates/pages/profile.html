@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block body %}
 <div class="container">
@@ -48,13 +49,14 @@
         <div class="col-auto col-xl-3 col-lg-2 col-md-1"></div>
     </div>
     <hr class="my-5">
-    <div class="row">
+    <div id="prediction" class="row">
         <h1>
             Predictions
         </h1>
         <div class="dropdown my-4">
             <button id="current-event-select" class="btn btn-lg btn-secondary dropdown-toggle" type="button"
                 data-bs-toggle="dropdown" aria-expanded="false">Event #1</button>
+            {% csrf_token %}
             <ul class="dropdown-menu">
                 {% for index in event_range %}
                 <li><button id="event-select-{{index}}"
@@ -67,23 +69,24 @@
         </div>
     </div>
     <div class="row mb-5 gap-4 gap-lg-0">
-        <div class="col-12 col-lg-5">
-            <h4>#{{event.number}} <b>{{event.name}}</b>{% if event.status == "Completed" %}
-                <span class="badge text-bg-primary rounded-pill ms-4 fs-6">{{event.status}}</span>
+        <div id="current-event" class="col-12 col-lg-5">
+            <h4 id="current-event-title">#{{event.number}} <b
+                    class="me-2">{{event.name}}</b>{% if event.status == "Completed" %}
+                <span class="badge text-bg-primary rounded-pill fs-6">{{event.status}}</span>
                 {% elif event.status == "Standby" %}
-                <span class="badge text-bg-danger rounded-pill ms-4 fs-6">{{event.status}}</span>
+                <span class="badge text-bg-danger rounded-pill fs-6">{{event.status}}</span>
                 {% elif event.status == "Live" %}
-                <span class="badge text-bg-warning rounded-pill ms-4 fs-6">{{event.status}}</span>
+                <span class="badge text-bg-warning rounded-pill fs-6">{{event.status}}</span>
                 {% else %}
-                <span class="badge text-bg-secondary rounded-pill ms-4 fs-6">{{event.status}}</span>
+                <span class="badge text-bg-secondary rounded-pill fs-6">{{event.status}}</span>
                 {% endif %}</h4>
-            <div class="text-secondary-emphasis">{{event.location}}</div>
+            <div id="current-event-location" class="text-secondary-emphasis">{{event.location}}</div>
             {% if event.status == "Completed" %}
-            <a class="btn btn-outline-primary mt-3 show-results" data-bs-toggle="collapse"
-                href="#result-{{event.number}}" role="button" aria-expanded="false">
+            <a id="toggle-result" class="btn btn-outline-primary mt-3 show-results" data-bs-toggle="collapse"
+                href="#result-event" role="button" aria-expanded="false">
                 Show Results
             </a>
-            <div class="row collapse mt-4 gap-4" id="result-{{event.number}}">
+            <div class="row collapse mt-4 gap-4" id="result-event">
                 <div class="col-xl-12 col-12 d-flex align-items-center gap-3">
                     <i class="bi bi-1-circle text-primary fs-2"></i>
                     <div class="w-100 d-flex align-items-center gap-2">
@@ -123,21 +126,21 @@
                     <div class="d-flex align-items-center justify-content-between my-2 fs-5">
                         <div class="d-flex align-items-center">
                             <div class="fs-5 me-3">Points: </div>
-                            {% if profile_user.league %}<span class="badge text-bg-primary fs-5">{{ total_points }}
+                            {% if profile_user.league %}<span class="badge text-bg-primary fs-5">0
                                 Points</span>
                             {% else %}--{% endif %}
                         </div>
                         {% if profile_user == user %}
-                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                            data-bs-target="#edit-prediction">Edit</button>
+                        <button id="new-prediction-btn" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#edit-prediction"
+                            {% if event.status == "Completed" and not prediction %}disabled{% endif %}>New</button>
 
                         <div class="modal fade" id="edit-prediction" tabindex="-1" aria-labelledby="editPrediction"
                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Event #{{ event.number }}
-                                            Prediction</h1>
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Event Prediction</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
@@ -180,34 +183,46 @@
                 <div class="card-body">
                     <ul class=" list-group list-group-flush">
                         <li class="list-group-item">
-                            <div class="d-flex align-items-center justify-content-between my-2 fs-5">
+                            <div id="first-prediction"
+                                class="d-flex align-items-center justify-content-between my-2 fs-5">
                                 <i class="bi bi-1-square fs-2"></i>
-                                <img class="rounded-circle img-fluid" src="{{ event.first_place.headshot_url }}"
-                                    alt="{{ event.first_place.name }}" style="max-width: 64px; max-height: 64px;">
-                                {{ event.first_place.name }}
+                                <img class="img-fluid"
+                                    src="{% if prediction %}{{ prediction.first.headshot_url}}{% else %}{% static "images/image-fill.svg" %}{% endif %}"
+                                    alt="surfer profile photo" style="max-width: 64px; max-height: 64px;">
+                                {% if prediction %}{{ prediction.first.name }}{% else %}--{% endif %}
                                 <br>
-                                <small class="text-secondary-emphasis fs-6"><i class="bi bi-geo"></i>
-                                    {{ event.first_place.country }}</small>
-                                {% if event.status != "Completed" %}
-                                <i class="bi bi-dash-circle-dotted text-secondary fs-1"></i>
-                                {% else %}
+                                <small class="text-secondary-emphasis fs-6"><i
+                                        class="bi bi-geo"></i>{% if prediction %}{{ prediction.first.country }}{% else %}--{% endif %}</small>
+                                {% if prediction and event.status == "Completed" %}
+                                {% if event.first_place == prediction.second %}
                                 <i class="bi bi-check-circle-fill text-success fs-1"></i>
+                                {% else %}
+                                <i class="bi bi-x-circle-fill text-danger fs-1"></i>
+                                {% endif %}
+                                {% else %}
+                                <i class="bi bi-dash-circle-dotted text-secondary fs-1"></i>
                                 {% endif %}
                             </div>
                         </li>
                         <li class="list-group-item">
-                            <div class="d-flex align-items-center justify-content-between my-2 fs-5">
+                            <div id="second-prediction"
+                                class="d-flex align-items-center justify-content-between my-2 fs-5">
                                 <i class="bi bi-2-square fs-2"></i>
-                                <img class="rounded-circle img-fluid" src="{{ event.second_place.headshot_url }}"
-                                    alt="{{ event.second_place.name }}" style="max-width: 64px; max-height: 64px;">
-                                {{ event.second_place.name }}
+                                <img class="img-fluid"
+                                    src="{% if prediction %}{{ prediction.second.headshot_url}}{% else %}{% static "images/image-fill.svg" %}{% endif %}"
+                                    alt="surfer profile photo" style="max-width: 64px; max-height: 64px;">
+                                {% if prediction %}{{ prediction.second.name }}{% else %}--{% endif %}
                                 <br>
-                                <small class="text-secondary-emphasis fs-6"><i class="bi bi-geo"></i>
-                                    {{ event.second_place.country }}</small>
-                                {% if event.status != "Completed" %}
-                                <i class="bi bi-dash-circle-dotted text-secondary fs-1"></i>
+                                <small class="text-secondary-emphasis fs-6"><i
+                                        class="bi bi-geo"></i>{% if prediction %}{{ prediction.second.country }}{% else %}--{% endif %}</small>
+                                {% if prediction and event.status == "Completed" %}
+                                {% if event.second_place == prediction.second %}
+                                <i class="bi bi-check-circle-fill text-success fs-1"></i>
                                 {% else %}
                                 <i class="bi bi-x-circle-fill text-danger fs-1"></i>
+                                {% endif %}
+                                {% else %}
+                                <i class="bi bi-dash-circle-dotted text-secondary fs-1"></i>
                                 {% endif %}
                             </div>
                         </li>
@@ -217,4 +232,8 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    const staticUrl = "{% static 'images/image-fill.svg' %}";
+</script>
 {% endblock %}
