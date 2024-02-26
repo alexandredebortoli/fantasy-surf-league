@@ -160,6 +160,8 @@ def leave_league(request):
 def profile(request, username):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
+    if request.user.username != username:
+        return HttpResponseRedirect(reverse("profile", args=(request.user.username,)))
     profile_user = User.objects.get(username=username)
     total_points = total_points = Prediction.objects.total_points_for_user(profile_user)
     total_correct_predictions = Prediction.objects.total_correct_predictions_for_user(
