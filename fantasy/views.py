@@ -190,6 +190,30 @@ def profile(request, username):
 
 
 def save_prediction(request):
+    if request.method == "POST":
+        try:
+            event_id = request.POST["new-prediction-event"]
+            first_id = request.POST["selected-first"]
+            second_id = request.POST["selected-second"]
+            event = Event.objects.get(pk=event_id)
+            first = Surfer.objects.get(pk=first_id)
+            second = Surfer.objects.get(pk=second_id)
+        except:
+            return HttpResponseRedirect(
+                reverse("profile", args=(request.user.username,))
+            )
+
+        try:
+            existing_prediction = Prediction.objects.get(user=request.user, event=event)
+            existing_prediction.first = first
+            existing_prediction.second = second
+            existing_prediction.save()
+        except:
+            new_prediction = Prediction(
+                user=request.user, event=event, first=first, second=second
+            )
+            new_prediction.save()
+
     return HttpResponseRedirect(reverse("profile", args=(request.user.username,)))
 
 

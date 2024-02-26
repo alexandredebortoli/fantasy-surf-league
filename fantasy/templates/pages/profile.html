@@ -144,34 +144,41 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
-                                    <form action="{% url 'save_prediction' %}" method="post">
+                                    <form id="prediction-form" action="{% url 'save_prediction' %}" method="post">
                                         {% csrf_token %}
                                         <div class="modal-body">
                                             <fieldset>
                                                 <div class="mb-3">
-                                                    <label for="disabledSelect" class="form-label">First
+                                                    <label for="first-place-select" class="form-label">First
                                                         Place:</label>
-                                                    <select id="disabledSelect" class="form-select">
-                                                        <option selected>--</option>
+                                                    <select id="first-place-select" class="form-select"
+                                                        name="selected-first">
+                                                        <option value="" disabled selected>--</option>
                                                         {% for surfer in surfers %}
-                                                        <option>{{ surfer.name }} ({{ surfer.country }})</option>
+                                                        <option value="{{ surfer.id }}">{{ surfer.name }}
+                                                            ({{ surfer.country }})</option>
                                                         {% endfor %}
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="disabledSelect" class="form-label">Second
+                                                    <label for="second-place-select" class="form-label">Second
                                                         Place:</label>
-                                                    <select id="disabledSelect" class="form-select">
-                                                        <option selected>--</option>
+                                                    <select id="second-place-select" class="form-select"
+                                                        name="selected-second">
+                                                        <option value="" disabled selected>--</option>
                                                         {% for surfer in surfers %}
-                                                        <option>{{ surfer.name }} ({{ surfer.country }})</option>
+                                                        <option value="{{ surfer.id }}">{{ surfer.name }}
+                                                            ({{ surfer.country }})</option>
                                                         {% endfor %}
                                                     </select>
                                                 </div>
+                                                <input id="new-prediction-event" type="hidden"
+                                                    name="new-prediction-event" value={{ event.id }}></input>
                                             </fieldset>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="submit" class="btn btn-primary">Save</button>
+                                            <button id="save-prediction-btn" type="submit"
+                                                class="btn btn-primary">Save</button>
                                         </div>
                                     </form>
                                 </div>

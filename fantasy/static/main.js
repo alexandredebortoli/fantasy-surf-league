@@ -109,6 +109,20 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
     });
   }
+
+  // Profile - New Prediction Form Not Empty
+  const predictionForm = document.getElementById("prediction-form");
+  if (predictionForm) {
+    predictionForm.addEventListener("submit", function (event) {
+      const firstPlace = document.getElementById("first-place-select");
+      const secondPlace = document.getElementById("second-place-select");
+
+      if (firstPlace.value == "" || secondPlace.value == "") {
+        event.preventDefault();
+        alert("Please select both first and second place.");
+      }
+    });
+  }
 });
 
 function profileDropdownActive(dropdownItems, activeItem) {
@@ -129,6 +143,10 @@ async function getCurrentEvent(events, currentEventNumber, surfers) {
     alert(`Failed to load selected event`);
     return;
   }
+
+  document
+    .getElementById("new-prediction-event")
+    .setAttribute("value", currentEvent.pk);
 
   const eventTitle = document.getElementById("current-event-title");
   const eventLocation = document.getElementById("current-event-location");
