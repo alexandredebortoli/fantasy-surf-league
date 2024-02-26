@@ -162,6 +162,12 @@ def profile(request, username):
         return HttpResponseRedirect(reverse("login"))
     profile_user = User.objects.get(username=username)
     total_points = total_points = Prediction.objects.total_points_for_user(profile_user)
+    total_correct_predictions = Prediction.objects.total_correct_predictions_for_user(
+        profile_user
+    )
+    total_incorrect_predictions = (
+        Prediction.objects.total_incorrect_predictions_for_user(profile_user)
+    )
     if not total_points:
         total_points = 0
     join_date = profile_user.date_joined.strftime("%b %d, %Y")
@@ -185,6 +191,8 @@ def profile(request, username):
             "event": first_event,
             "surfers": surfers,
             "prediction": first_event_prediction,
+            "total_correct_predictions": total_correct_predictions,
+            "total_incorrect_predictions": total_incorrect_predictions,
         },
     )
 

@@ -22,6 +22,26 @@ class PredictionManager(models.Manager):
             "total_points"
         ]
 
+    def total_correct_predictions_for_user(self, user):
+        static_predictions = self.filter(user=user, event__status="Completed")
+        count = 0
+        for static_prediction in static_predictions:
+            if static_prediction.first == static_prediction.event.first_place:
+                count += 1
+            if static_prediction.second == static_prediction.event.second_place:
+                count += 1
+        return count
+
+    def total_incorrect_predictions_for_user(self, user):
+        static_predictions = self.filter(user=user, event__status="Completed")
+        count = 0
+        for static_prediction in static_predictions:
+            if static_prediction.first != static_prediction.event.first_place:
+                count += 1
+            if static_prediction.second != static_prediction.event.second_place:
+                count += 1
+        return count
+
 
 class Prediction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="predictions")
