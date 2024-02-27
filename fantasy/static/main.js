@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", async function () {
   // Set the theme according to user preference
-  const prefersLightScheme = window.matchMedia("(prefers-color-scheme: light)");
+  // const prefersLightScheme = window.matchMedia("(prefers-color-scheme: light)");
 
-  if (prefersLightScheme.matches) {
-    document.querySelector("html").setAttribute("data-bs-theme", "light");
-  } else {
-    document.querySelector("html").setAttribute("data-bs-theme", "dark");
-  }
+  // if (prefersLightScheme.matches) {
+  //   document.querySelector("html").setAttribute("data-bs-theme", "light");
+  // } else {
+  //   document.querySelector("html").setAttribute("data-bs-theme", "dark");
+  // }
 
   // Set the active link in the navbar
   var path = window.location.pathname.substring(1);
