@@ -316,7 +316,7 @@ async function getCurrentEventPrediction(predictions, currentEvent, surfers) {
 }
 
 async function fetchApi(uri, csrfToken) {
-  const response = fetch(`http://127.0.0.1:8000/api/${uri}`, {
+  const response = fetch(`https://wsl-fantasy.onrender.com/api/${uri}`, {
     method: "GET",
     headers: { "Content-type": "application/json", "X-CSRFToken": csrfToken },
   })
