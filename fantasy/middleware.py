@@ -20,11 +20,12 @@ class ScrapeMiddleware:
             .order_by("number")
         )
 
-        if events_ended.exists() or events_started.exists():
+        empty_events = not Event.objects.exists()
+
+        if empty_events or events_ended.exists() or events_started.exists():
             print("Scraping data...")
             scrape_and_update_data()
             print("Data scraped!")
-
         response = self.get_response(request)
 
         return response
