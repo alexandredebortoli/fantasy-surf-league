@@ -111,18 +111,18 @@ def league(request):
 
 def join_league(request):
     if request.method == "POST":
-        code = request.POST["code"]
-        author = request.user
-        league = League.objects.get(identifier=code)
-        if not league:
+        try:
+            code = request.POST["code"]
+            author = request.user
+            league = League.objects.get(identifier=code)
+            author.league = league
+            author.save()
+        except:
             return render(
                 request,
                 "pages/league.html",
                 {"message": "League not found."},
             )
-
-        author.league = league
-        author.save()
 
     return HttpResponseRedirect(reverse("league"))
 
