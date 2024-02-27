@@ -1,4 +1,4 @@
-# World Surf League Championship Tour Game
+# Fantasy Surf League
 
 This project is a web application built as the final project for the CS50W course. It is a World Surf League Championship Tour game, similar to a fantasy sports league, where users can make event predictions for surfers and accumulate points based on the accuracy of their predictions. The app allows users to join or create leagues to compete with friends and track their rankings.
 
