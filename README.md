@@ -61,7 +61,7 @@ This project stands out from other projects in the CS50W course due to its uniqu
 
 1. Sign Up/Login: If you haven't already, sign up for an account or log in with your existing credentials.
 2. Join or Create a League: Once logged in, you can join an existing league or create your own league to compete with friends.
-3. Make Event Predictions: Navigate to the events page to view upcoming surfing events on the World Surf League Championship Tour. For each event, you can predict the first and second-place surfers. Remember that you cannot repeat the first-place surfer in the second-place prediction.
+3. Make Event Predictions: Navigate to the profile page to view upcoming events on the World Surf League Championship Tour. For each event, you can predict the first and second-place surfers. Remember that you cannot repeat the first-place surfer in the second-place prediction.
 4. Submit Predictions: Once you've made your predictions for an event, submit them before the event starts. You cannot add predictions to an event that has already started.
 5. Earn Points: Points are awarded based on the accuracy of your predictions. See below for details on the points system.
 
