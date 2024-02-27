@@ -26,7 +26,6 @@ class ScrapeMiddleware:
             print("Scraping data...")
             scrape_and_update_data()
             print("Data scraped!")
-
         response = self.get_response(request)
 
         return response
