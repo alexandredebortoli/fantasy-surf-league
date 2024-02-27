@@ -316,10 +316,13 @@ async function getCurrentEventPrediction(predictions, currentEvent, surfers) {
 }
 
 async function fetchApi(uri, csrfToken) {
-  const response = fetch(`https://wsl-fantasy.onrender.com/api/${uri}`, {
-    method: "GET",
-    headers: { "Content-type": "application/json", "X-CSRFToken": csrfToken },
-  })
+  const response = fetch(
+    `https://fantasy-surf-league.onrender.com/api/${uri}`,
+    {
+      method: "GET",
+      headers: { "Content-type": "application/json", "X-CSRFToken": csrfToken },
+    }
+  )
     .then((response) => {
       if (response.ok) {
         return response.json();
