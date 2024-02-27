@@ -7,14 +7,9 @@ from django.core.serializers import serialize
 import json
 
 from fantasy.models import *
-from fantasy.task import scrape_and_update_data
-from fantasy.webscraper import (
-    scrape_rankings,
-)
 
 
 def index(request):
-    scrape_and_update_data()
     return render(request, "pages/index.html")
 
 
