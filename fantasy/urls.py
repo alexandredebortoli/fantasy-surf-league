@@ -18,6 +18,8 @@ urlpatterns = [
     path("profile/<str:username>", views.profile, name="profile"),
     path("save_prediction", views.save_prediction, name="save_prediction"),
     path("api/events", views.get_events, name="get_events"),
-    path("api/predictions", views.get_predictions, name="get_predictions"),
+    path(
+        "api/predictions/<str:username>", views.get_predictions, name="get_predictions"
+    ),
     path("api/surfers", views.get_surfers, name="get_surfers"),
 ]

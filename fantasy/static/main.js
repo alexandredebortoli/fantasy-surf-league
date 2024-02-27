@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Set the active link in the navbar
   var path = window.location.pathname.substring(1);
+  const currentUserUsername = document
+    .getElementById("current-user-username")
+    .innerText.substr(1);
 
   var navLinks = document.querySelectorAll(".nav-link");
   navLinks.forEach((link) => {
@@ -23,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       (href === "rankings" && path === "rankings") ||
       (href === "surfers" && path === "surfers") ||
       (href === "league" && path === "league") ||
-      (href.includes("@") && path.includes("profile"))
+      (href.includes("@") && path.includes(`profile/${currentUserUsername}`))
     ) {
       link.classList.add("active");
       if (!href.includes("@")) link.classList.add("fw-bold");
@@ -79,8 +82,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       "[name=csrfmiddlewaretoken]"
     ).value;
     const dropdownItems = document.querySelectorAll(".event-select");
+    const profileUsername = window.location.pathname.split("/")[2];
     const events = await fetchApi("events", csrfToken);
-    const predictions = await fetchApi("predictions", csrfToken);
+    const predictions = await fetchApi(
+      `predictions/${profileUsername}`,
+      csrfToken
+    );
     const surfers = await fetchApi("surfers", csrfToken);
 
     dropdownItems.forEach((item) => {
@@ -97,14 +104,16 @@ document.addEventListener("DOMContentLoaded", async function () {
           currentEventNumber,
           surfers
         );
-        if (currentEvent.fields.status === "Completed")
-          document
-            .getElementById("new-prediction-btn")
-            .setAttribute("disabled", "true");
-        else
-          document
-            .getElementById("new-prediction-btn")
-            .removeAttribute("disabled");
+        if (profileUsername === currentUserUsername) {
+          if (currentEvent.fields.status === "Completed")
+            document
+              .getElementById("new-prediction-btn")
+              .setAttribute("disabled", "true");
+          else
+            document
+              .getElementById("new-prediction-btn")
+              .removeAttribute("disabled");
+        }
         await getCurrentEventPrediction(predictions, currentEvent, surfers);
       });
     });
@@ -149,9 +158,9 @@ async function getCurrentEvent(events, currentEventNumber, surfers) {
     return;
   }
 
-  document
-    .getElementById("new-prediction-event")
-    .setAttribute("value", currentEvent.pk);
+  const newPredictionEvent = document.getElementById("new-prediction-event");
+  if (newPredictionEvent)
+    newPredictionEvent.setAttribute("value", currentEvent.pk);
 
   const eventTitle = document.getElementById("current-event-title");
   const eventLocation = document.getElementById("current-event-location");
@@ -315,7 +324,8 @@ async function fetchApi(uri, csrfToken) {
       if (response.ok) {
         return response.json();
       }
-      throw new Error(`Failed to load predictions`);
+      console.log(`Failed to fetch api /${uri}`);
+      throw new Error(`Failed to get data`);
     })
     .then((data) => {
       return data;

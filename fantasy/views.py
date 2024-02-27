@@ -160,8 +160,6 @@ def leave_league(request):
 def profile(request, username):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
-    if request.user.username != username:
-        return HttpResponseRedirect(reverse("profile", args=(request.user.username,)))
     profile_user = User.objects.get(username=username)
     total_points = total_points = Prediction.objects.total_points_for_user(profile_user)
     total_correct_predictions = Prediction.objects.total_correct_predictions_for_user(
@@ -235,12 +233,16 @@ def get_events(request):
     return JsonResponse(serialized_data, safe=False, status=200)
 
 
-def get_predictions(request):
-    predictions = Prediction.objects.filter(user=request.user)
-    serialized_data = serialize("json", predictions)
-    serialized_data = json.loads(serialized_data)
-    serialized_data
-    return JsonResponse(serialized_data, safe=False, status=200)
+def get_predictions(request, username):
+    try:
+        user = User.objects.get(username=username)
+        predictions = Prediction.objects.filter(user=user)
+        serialized_data = serialize("json", predictions)
+        serialized_data = json.loads(serialized_data)
+        serialized_data
+        return JsonResponse(serialized_data, safe=False, status=200)
+    except:
+        return JsonResponse(status=404)
 
 
 def get_surfers(request):

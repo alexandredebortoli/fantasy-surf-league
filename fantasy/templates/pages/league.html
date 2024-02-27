@@ -55,7 +55,8 @@
                     <div class="col ms-sm-4 ms-2 me-2 gap-2 d-flex justify-content-center align-items-center">
                         <div class="col {% if index == 1 %}text-primary fw-bold{% endif %}">
                             <span class="fs-5">
-                                @{{ member.username }}
+                                @<a href="{% url 'profile' member.username %}"
+                                    class="link-offset-1 {% if index == 1 %}text-primary{% else %}text-body{% endif %}">{{ member.username }}</a>
                             </span>
                         </div>
                     </div>

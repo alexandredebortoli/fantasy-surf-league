@@ -43,7 +43,8 @@
           {% if user.is_authenticated %}
           <span class="nav-link">•</span>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'profile' user.username %}"><strong>@{{ user.username }}</strong></a>
+            <a class="nav-link" href="{% url 'profile' user.username %}"><strong
+                id="current-user-username">@{{ user.username }}</strong></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'league' %}">League</a>
