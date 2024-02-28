@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", async function () {
   // Set the theme according to user preference
-  const prefersLightScheme = window.matchMedia("(prefers-color-scheme: light)");
+  // const prefersLightScheme = window.matchMedia("(prefers-color-scheme: light)");
 
-  if (prefersLightScheme.matches) {
-    document.querySelector("html").setAttribute("data-bs-theme", "light");
-  } else {
-    document.querySelector("html").setAttribute("data-bs-theme", "dark");
-  }
+  // if (prefersLightScheme.matches) {
+  //   document.querySelector("html").setAttribute("data-bs-theme", "light");
+  // } else {
+  //   document.querySelector("html").setAttribute("data-bs-theme", "dark");
+  // }
 
   // Set the active link in the navbar
   var path = window.location.pathname.substring(1);
@@ -316,10 +316,13 @@ async function getCurrentEventPrediction(predictions, currentEvent, surfers) {
 }
 
 async function fetchApi(uri, csrfToken) {
-  const response = fetch(`http://127.0.0.1:8000/api/${uri}`, {
-    method: "GET",
-    headers: { "Content-type": "application/json", "X-CSRFToken": csrfToken },
-  })
+  const response = fetch(
+    `https://fantasy-surf-league.onrender.com/api/${uri}`,
+    {
+      method: "GET",
+      headers: { "Content-type": "application/json", "X-CSRFToken": csrfToken },
+    }
+  )
     .then((response) => {
       if (response.ok) {
         return response.json();
