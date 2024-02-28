@@ -71,7 +71,7 @@ def register(request):
 
 
 def events(request):
-    events = Event.objects.all()
+    events = Event.objects.all().order_by("number")
     return render(request, "pages/events.html", {"events": events})
 
 
