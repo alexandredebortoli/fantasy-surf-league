@@ -1,12 +1,10 @@
 # Fantasy Surf League
 
-This project is a web application built as the final project for the CS50W course. It is a World Surf League Championship Tour game, similar to a fantasy sports league, where users can make event predictions for surfers and accumulate points based on the accuracy of their predictions. The app allows users to join or create leagues to compete with friends and track their rankings.
+This project is a World Surf League Championship Tour game, similar to a fantasy sports league, where users can make event predictions for surfers and accumulate points based on the accuracy of their predictions. The app allows users to join or create leagues to compete with friends and track their rankings.
 
 The application is designed to provide a dynamic and engaging experience for surf enthusiasts, allowing them to stay updated with the latest championship tour information and compete with others in a friendly competition.
 
 ## Distinctiveness and Complexity
-
-This project stands out from other projects in the CS50W course due to its unique combination of features and technologies that have not been implemented in the other projects.
 
 1. **Web Scraping**: One of the key features of this project is the integration of web scraping to fetch real-time data from the official [World Surf League website](https://www.worldsurfleague.com/). This data includes information about surfers, events, and rankings, which is then stored and updated in the database. Implementing web scraping adds a unique and dynamic aspect to the application, ensuring that users have access to the latest information about the championship tour.
 
@@ -17,8 +15,6 @@ This project stands out from other projects in the CS50W course due to its uniqu
 4. **League Creation and Joining**: Users have the ability to create or join leagues, allowing them to compete with friends and track their performance relative to others. This social aspect adds depth and complexity to the application, creating a community-driven experience for users.
 
 5. **Points System**: The application implements a points system where users earn points for correct event predictions. This adds a competitive element to the game and motivates users to participate actively in making predictions for each event.
-
-6. **Theme Toggle**: The addition of a theme toggle feature, where the theme is automatically set based on the user's device appearance preference, adds an extra layer of complexity to the project. This feature requires detecting and accessing the user's device appearance settings and dynamically applying the appropriate theme to the application. The default theme is set to dark.
 
 ## File Contents
 
